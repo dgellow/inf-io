@@ -15,12 +15,16 @@
 ;; https://github.com/nonsequitur/inf-ruby
 
 (defvar inf-io-buffer nil "Current Io process buffer.")
+
 (defvar inf-io-default-implementation "io")
+
 (defvar inf-io-implementations
-  '(("io" . "io")))
+  '(("io" . "io"))  
+  "A list of the different implementations of Io interpreter. There is only one at the current time.")
 
-(defun inf-io-process () (get-buffer-process inf-io-buffer))
-
+(defun inf-io-process () 
+  "Return the inf Io process embedded in *io* buffer."
+  (get-buffer-process inf-io-buffer))
 
 (defun run-io (&optional command name)
   "Run an inferior Io process, input and output via buffer *io*."
@@ -28,7 +32,6 @@
   (interactive)
   (setq command (or command (cdr (assoc inf-io-default-implementation
                                         inf-io-implementations))))
-  
   (setq name (or name "io"))
 
   (if (not (comint-check-proc inf-io-buffer))
