@@ -14,6 +14,8 @@
 ;; Work based on the inf-ruby.el by Yukihiro Matsumoto and Nobuyoshi Nakada
 ;; https://github.com/nonsequitur/inf-ruby
 
+
+;; Vars
 (defvar inf-io-buffer nil "Current Io process buffer.")
 
 (defvar inf-io-default-implementation "io")
@@ -22,6 +24,30 @@
   '(("io" . "io"))  
   "A list of the different implementations of Io interpreter. There is only one at the current time.")
 
+
+;; Tools
+(defun region-get-lines (start end)
+  "Return a cons of a region, line by line."
+  (goto-char start)
+  (defun loop-on-lines (acc)
+    (if acc
+        (forward-line 1))
+
+    (if (>= (line-end-position) end)
+        (cons 
+         (buffer-substring-no-properties 
+          (line-beginning-position) end)
+         acc)
+      (loop-on-lines (cons 
+                      (buffer-substring-no-properties 
+                       (line-beginning-position)
+                       (line-end-position))
+                      acc))))
+
+  (loop-on-lines '()))
+
+
+;; Io process
 (defun inf-io-process () 
   "Return the inf Io process embedded in *io* buffer."
   (get-buffer-process inf-io-buffer))
