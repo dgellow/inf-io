@@ -46,3 +46,10 @@
   (comint-send-string (inf-io-process) "doString(\"\n")
   (comint-send-region (inf-io-process) start end)
   (comint-send-string (inf-io-process) "\"\n)\n"))
+
+(defun io-send-region-and-go (start end)
+  "Send the region to the Io process and select the *io* buffer."
+  (interactive "r")
+  (io-send-region start end)
+  (pop-to-buffer inf-io-buffer)
+  (end-of-buffer))
