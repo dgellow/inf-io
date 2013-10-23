@@ -46,6 +46,9 @@
 
   (reverse (loop-on-lines '())))
 
+(defun escape-quotes (string)
+  (replace-regexp-in-string "\\\"" "\\\\\"" string))
+
 
 ;; Io process
 (defun inf-io-process () 
@@ -69,12 +72,12 @@
 (defun io-send-region (start end)
   "Send the current region to the inferior Io process."
   (interactive "r")
-  (let ((lines (mapcar (lambda (x) (concat x "\n")) 
+  (let ((lines (mapcar (lambda (x) (concat (escape-quotes x) "\\n")) 
                        (region-get-lines start end))))
 
-    (comint-send-string (inf-io-process) "doString(\"\n")
-    (mapc (lambda (x) (comint-send-string (inf-io-process) x)) lines)
-    (comint-send-string (inf-io-process) "\"\n)\n")))
+    (comint-send-string (inf-io-process) 
+                        (format "doString(\"%s\")\n"
+                                (apply 'concat lines)))))
 
 (defun io-send-region-and-go (start end)
   "Send the region to the Io process and select the *io* buffer."
