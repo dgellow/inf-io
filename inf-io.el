@@ -19,28 +19,27 @@
 (defvar inf-io-implementations
 	'(("io" . "io")))
 
+(defun inf-io-process () (get-buffer-process inf-io-buffer))
+
+
 (defun run-io (&optional command name)
   "Run an inferior Io process, input and output via buffer *io*."
   
   (interactive)
   (setq command (or command (cdr (assoc inf-io-default-implementation
-					inf-io-implementations))))
+																				inf-io-implementations))))
   
   (setq name (or name "io"))
 
   (if (not (comint-check-proc inf-io-buffer))
       (let ((commandlist (split-string-and-unquote command)))
-	(set-buffer (apply 'make-comint name (car commandlist)
-			   nil (cdr commandlist)))))
+				(set-buffer (apply 'make-comint name (car commandlist)
+													 nil (cdr commandlist)))))
   (pop-to-buffer (setq inf-io-buffer (format "*%s*" name))))
 
 (defun io-send-region (start end)
   "Send the current region to the inferior Io process."
   (interactive "r")
-  (comint-send-region (get-buffer-process inf-io-buffer) start end))
-
-
-
-
-
-
+	(comint-send-string (inf-io-process) "doString(\"\n")
+  (comint-send-region (inf-io-process) start end)
+	(comint-send-string (inf-io-process) "\"\n)\n"))
